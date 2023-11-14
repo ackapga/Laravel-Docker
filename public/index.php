@@ -9,5 +9,6 @@
 </head>
 <body>
 <h3>Hello world! Docker started!</h3>
+<?php echo "This PHP code! so... Hello world from PHP!"?>
 </body>
 </html>
