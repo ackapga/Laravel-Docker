@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+
+  ########## NGINX -------------------------------------------
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+      - db
+    volumes:
+      - ./src:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+
+  ########## MYSQL DB ----------------------------------------
+  db:
+    container_name: mysql
+    image: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=blog
+      - MYSQL_ROOT_PASSWORD=root
+
+  ########## PhpMyAdmin --------------------------------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "3400:80"
+    depends_on:
+      - db
+
+  ########## POSTGRAS DB -------------------------------------
+  # db:
+  #   container_name: postgres
+  #   image: postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - ./postgresql/data:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_DB: blog
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: password
+
+  ########## PG ADMIN ----------------------------------------
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgAdmin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: test@gmail.com
+  #     PGADMIN_DEFAULT_PASSWORD: password
+
+  ########## BLOG -------------------------------------------
+  app:
+    container_name: blog
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/var/www
+    ports:
+      - "9000:9000"
+    working_dir: /var/www
